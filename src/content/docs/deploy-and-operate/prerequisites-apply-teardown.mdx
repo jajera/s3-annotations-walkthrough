@@ -1,0 +1,122 @@
+---
+title: "Prerequisites, apply, ingest, and teardown"
+description: "Deploy and operate the S3 Annotations demo — prerequisites, Terraform apply, manual ingest, scheduler options, and teardown."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+## Prerequisites
+
+- Clone [terraform-aws-s3-annotations-demo](https://github.com/jajera/terraform-aws-s3-annotations-demo) — all `terraform`, `aws`, and `curl` commands in this walkthrough run from that repository
+- AWS account (S3, Lambda, API Gateway, Amplify, IAM; optional DynamoDB)
+- Terraform ≥ 1.6, Node.js + npm, Python 3.14, AWS CLI ≥ 2.35.6, boto3 ≥ 1.43.32, `pip3`, `zip`
+
+## Apply
+
+```bash
+cd terraform
+terraform init
+terraform apply
+```
+
+Terraform builds and deploys the React app by default (`deploy_amplify_on_apply = true`).
+
+After apply, Terraform automatically **builds and deploys** the React app to Amplify. Open the URL from output `amplify_app_url`, click **Apply Filters**, and load images.
+
+### Skip Amplify deploy on apply
+
+Useful when CI lacks Node.js:
+
+```bash
+terraform apply -var='deploy_amplify_on_apply=false'
+./scripts/deploy-amplify.sh   # run manually later with env vars set
+```
+
+<Aside type="note">
+  Skip the Amplify deploy and you miss the gallery — filters, tag chips, and the
+  payoff of seeing annotation JSON turn into a UI. Fine for headless CI; sad for
+  demos.
+</Aside>
+
+### Optional one-time scheduler
+
+Schedule a single ingest run at a future UTC time:
+
+```bash
+terraform apply \
+  -var='enable_scheduler=true' \
+  -var='schedule_time=2026-06-19T08:00:00'
+```
+
+Or copy `terraform/terraform.tfvars.example` to `terraform.tfvars`, uncomment `enable_scheduler` and `schedule_time`, then run `terraform apply`.
+
+> **Note:** `schedule_time` must be a future UTC datetime: `YYYY-MM-DDTHH:mm:ss`. The scheduler fires once and auto-deletes.
+
+### Scheduler behavior
+
+- Scheduler is **off by default** (`enable_scheduler = false`) so `terraform apply` and `terraform destroy` never ask for `schedule_time`.
+- When enabled, EventBridge fires **once** at `schedule_time` and auto-deletes (`action_after_completion = DELETE`).
+- To schedule another run after the first fires: set a new `schedule_time` and `terraform apply` again.
+
+## Manual ingest
+
+| Method            | When to use                           |
+| ----------------- | ------------------------------------- |
+| **Manual invoke** | Run ingest immediately (demo/testing) |
+| **Scheduler**     | Fire ingest once at a chosen UTC time |
+
+```bash
+aws lambda invoke \
+  --function-name volcano-ingest \
+  --payload '{}' \
+  --cli-binary-format raw-in-base64-out \
+  /tmp/ingest-result.json
+```
+
+Response body includes `images_copied`, `images_annotated`, `annotation_failures`, `date`.
+
+## Key Terraform variables
+
+| Variable                  | Default                            | Notes                        |
+| ------------------------- | ---------------------------------- | ---------------------------- |
+| `aws_region`              | `ap-southeast-2`                   | AWS region for all resources |
+| `enable_dynamodb`         | `false`                            | Optional annotation mirror   |
+| `enable_scheduler`        | `false`                            | One-time ingest schedule     |
+| `deploy_amplify_on_apply` | `true`                             | Build gallery after apply    |
+| `schedule_time`           | `2099-01-01T00:00:00`              | Ignored if scheduler off     |
+| `private_bucket_name`     | `volcano-annotations-demo-private` |                              |
+| `amplify_app_name`        | `volcano-annotations-demo`         |                              |
+
+## Troubleshooting
+
+| Symptom | Likely cause | What to do |
+| ------- | ------------ | ---------- |
+| Gallery **503** on **Apply Filters** | Filtered API scan timed out (30s API Gateway limit) | Reduce bucket size (`INGEST_LOOKBACK_DAYS`), enable [DynamoDB mirror](/pipeline-deep-dive/optional-dynamodb-mirror/), or see [API performance](/pipeline-deep-dive/api-query-and-presign/#performance-and-api-gateway-limits) |
+| Gallery **503** on first load (no filters) | Old API handler or very large bucket | `terraform apply` to pick up page-first fetching; consider teardown + re-apply |
+
+## Teardown
+
+```bash
+cd terraform
+terraform destroy -auto-approve
+```
+
+`force_destroy = true` on the private bucket empties objects (and their annotations) automatically.
+
+Resources removed by `terraform destroy`:
+
+- Private S3 bucket (including all objects)
+- Amplify Hosting application
+- Ingest Lambda and API Lambda
+- API Gateway HTTP API
+- EventBridge Scheduler (if it hasn't auto-deleted yet)
+- IAM roles and policies
+- DynamoDB table (when enabled)
+
+## Post-destroy verification
+
+Confirm all resources are gone:
+
+```bash
+terraform state list  # should be empty after destroy
+```

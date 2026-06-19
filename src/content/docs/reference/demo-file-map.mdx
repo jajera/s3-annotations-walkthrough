@@ -1,0 +1,50 @@
+---
+title: "Demo project file map"
+description: "File reference for terraform-aws-s3-annotations-demo — Lambda, Terraform, Amplify, scripts, and local testing."
+---
+
+Paths below are in [terraform-aws-s3-annotations-demo](https://github.com/jajera/terraform-aws-s3-annotations-demo) — clone that repo to follow along. This documentation site only publishes the walkthrough. See also [External links](/reference/external-links/).
+
+| Path                                | Role                                                                                                |
+| ----------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `lambda/shared/s3_annotations.py`   | `put_object_annotation` / `get_object_annotation`                                                   |
+| `terraform/iam.tf`                  | `s3:PutObjectAnnotation` / `s3:GetObjectAnnotation` IAM                                             |
+| `lambda/ingest_annotate/handler.py` | Copy + annotate                                                                                     |
+| `lambda/api/handler.py`             | Query annotations + presign                                                                         |
+| `terraform/`                        | Full stack (S3, Lambda, API GW, Amplify, optional DynamoDB)                                         |
+| `amplify/src/`                      | Gallery UI                                                                                          |
+| `scripts/build-lambda-packages.sh`  | Lambda zip build (boto3 ≥ 1.43.32)                                                                  |
+| `docs/walkthrough.md`               | Original single-file guide — superseded by this site ([external links](/reference/external-links/)) |
+| `docs/architecture.png`             | Architecture diagram                                                                                |
+| `docs/namespaces.png`               | Annotation namespaces diagram                                                                       |
+| `docs/webapp.png`                   | Gallery screenshot                                                                                  |
+| `samples/volcano/`                  | Local reference JPEGs                                                                               |
+| `README.md`                         | Quick start                                                                                         |
+
+## Build notes
+
+- **AWS CLI** ≥ 2.35.6
+- **boto3** ≥ 1.43.32
+- **Pillow** used only for `visibility` brightness
+- **Lambda runtime:** `python3.14` (see `terraform/lambda.tf`)
+- **Local tests:** use `python3.14` — see `.python-version`
+
+## Local sample images
+
+Reference samples (TKAH.01, UTC day 169):
+
+- `samples/volcano/2026.169.0240.00.TKAH.01.jpg`
+- `samples/volcano/2026.169.0800.00.TKAH.01.jpg`
+
+Source: `s3://geonet-open-data/camera/volcano/images/2026/TKAH/TKAH.01/2026.169/`
+
+## Python tests
+
+```bash
+python3.14 -m venv .venv
+source .venv/bin/activate
+pip install -r requirements-dev.txt
+pytest tests/ -v
+```
+
+Tests include property-based tests (via Hypothesis) for the classifier, key parser, and API validator, plus unit tests for Lambda handlers.

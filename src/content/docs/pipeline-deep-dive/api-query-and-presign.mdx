@@ -1,0 +1,126 @@
+---
+title: "API: query and presign"
+description: "GET /images API — query parameters, response shape, pagination, read paths, and API Gateway performance limits."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+**Endpoint:** `GET {api_invoke_url}/images`  
+**Code:** `lambda/api/handler.py` · **Terraform:** `terraform/lambda.tf`
+
+## Query parameters
+
+| Parameter    | Values                               |
+| ------------ | ------------------------------------ |
+| `day_phase`  | `night`, `dawn`, `day`, `dusk`       |
+| `utc_day`    | `YYYY.DDD` e.g. `2026.170`           |
+| `visibility` | `daylight`, `low_light`, `night`     |
+| `limit`      | 1–200 (gallery uses 24 per page)     |
+| `offset`     | Skip N matching results (pagination) |
+
+Example:
+
+```bash
+API=$(terraform -chdir=terraform output -raw api_invoke_url)
+curl -s "${API}/images?utc_day=2026.170&day_phase=dusk&limit=1" | python3 -m json.tool
+```
+
+## Response
+
+**Sample output** (`utc_day=2026.170`, `day_phase=dusk`, `limit=1`):
+
+```json
+{
+  "items": [
+    {
+      "key": "camera/volcano/images/2026/TKAH/TKAH.01/2026.170/2026.170.0800.00.TKAH.01.jpg",
+      "tags": {
+        "updated_at": "2026-06-19T08:57:20Z",
+        "model": "metadata-luminance-v1",
+        "camera_id": "TKAH.01",
+        "day_phase": "dusk",
+        "visibility": "daylight",
+        "ingest_run_id": "49f52ccc-2b61-4e1b-91c0-04440e479686",
+        "utc_day": "2026.170",
+        "captured_utc": "2026-06-19T08:00:00Z",
+        "volcano_site": "TKAH"
+      },
+      "image_url": "https://volcano-annotations-demo-private.s3.amazonaws.com/camera/volcano/images/2026/TKAH/TKAH.01/2026.170/2026.170.0800.00.TKAH.01.jpg?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=900&..."
+    }
+  ],
+  "total_available": 19,
+  "offset": 0,
+  "limit": 1
+}
+```
+
+- **`tags`** — parsed S3 Annotation payload (subset of fields may appear depending on DynamoDB mirror vs S3 read path)
+- **`image_url`** — presigned `GetObject`, expires in 900s (truncated above; your response includes full query params)
+- **`total_available`** — full match count across all pages (`19` dusk images on UTC day `2026.170` at time of sample)
+- **`offset`** / **`limit`** — pagination cursor for the gallery/API
+
+## Default read path (no DynamoDB)
+
+There is **no bucket-level annotation query** — the API implements search itself. See [no server-side query](/introduction/what-are-s3-annotations/#no-server-side-query) for the tradeoff.
+
+The handler uses **two strategies** depending on whether query filters are present:
+
+| Request | Annotation reads | Why |
+| ------- | ---------------- | --- |
+| **No filters** (default gallery load) | Current page only (~24 keys) | Stays within API Gateway's 30s integration timeout |
+| **With filters** (`day_phase`, `utc_day`, `visibility`) | Every object in the bucket | Needs a full scan to return an accurate `total_available` for pagination |
+
+**Unfiltered flow** (`lambda/api/handler.py`):
+
+1. List all object keys in the private bucket
+2. Slice keys for the requested `offset` + `limit`
+3. Fetch annotations for **that page only** (`GetObjectAnnotation`, parallel)
+4. Sort by `captured_utc`; presign objects in the page
+
+**Filtered flow:**
+
+1. List all object keys
+2. Fetch **every** annotation in parallel batches
+3. Apply filters; sort matches by `captured_utc`
+4. Slice the match list with `offset` + `limit`; presign the page
+
+Images always come from S3; annotations supply metadata only.
+
+## Performance and API Gateway limits
+
+<Aside type="caution">
+  API Gateway has a **hard 30-second integration timeout** for Lambda. The API Lambda timeout is set to **29s** in `terraform/lambda.tf` — there is no headroom beyond that ceiling.
+</Aside>
+
+### Symptom: HTTP 503 from the gallery
+
+The Amplify gallery calls `GET /images`. When the API Lambda exceeds API Gateway's limit, the response is:
+
+```json
+{ "message": "Service Unavailable" }
+```
+
+Early versions of the demo hit this on **unfiltered** loads: the handler listed every key, fetched **every** annotation, then paginated — thousands of `GetObjectAnnotation` calls for a 7-day ingest window.
+
+### What the demo does today
+
+| Change | Where | Effect |
+| ------ | ----- | ------ |
+| Page-first fetch (no filters) | `lambda/api/handler.py` | Default gallery load reads ~24 annotations, not the whole bucket |
+| Memory **512 MB** | `terraform/lambda.tf` | More CPU for parallel S3 I/O |
+| **`ANNOTATION_FETCH_WORKERS=48`** | API Lambda env | Higher parallelism for filtered scans |
+| Timeout **29s** | `terraform/lambda.tf` | Stays under API Gateway's 30s cap |
+
+Unfiltered gallery loads typically complete in a few seconds. Pagination and presigned URLs are unchanged.
+
+### When you may still hit the limit
+
+Filtered queries still scan **all** annotations — that cost grows with bucket size:
+
+- **Increase ingest scope** — default `INGEST_LOOKBACK_DAYS=7` in ingest Lambda env; more days → more objects → slower filtered loads. See [Ingest: copy and annotate](/pipeline-deep-dive/ingest-copy-and-annotate/).
+- **Re-run ingest** without teardown — objects accumulate across runs.
+- **Heavy filter use** in the gallery — every **Apply Filters** triggers a full annotation scan.
+
+<Aside type="note">
+  **Mitigations:** keep the default 7-day lookback for demos; enable the [optional DynamoDB mirror](/pipeline-deep-dive/optional-dynamodb-mirror/) for larger catalogs or frequent filtered queries; redeploy after pulling API handler changes (`cd terraform && terraform apply`).
+</Aside>

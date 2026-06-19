@@ -1,0 +1,34 @@
+---
+title: "Amplify gallery"
+description: "The React gallery UI — filters, pagination, tag chips, and manual Amplify deployment."
+---
+
+import DocsImage from "../../../components/DocsImage.astro";
+import { Aside } from "@astrojs/starlight/components";
+
+**URL:** `terraform output amplify_app_url` (from a clone of [terraform-aws-s3-annotations-demo](https://github.com/jajera/terraform-aws-s3-annotations-demo))
+
+<DocsImage
+  src="images/webapp.png"
+  alt="S3 Annotations demo gallery — filters, result count, Te Kaha camera images with annotation tag chips"
+/>
+
+1. Open gallery → optional filters (day phase, UTC day, visibility)
+2. **Apply Filters** — loads annotations via API; summary shows **N images match**
+3. Paginate with Previous / Next when results exceed 24 per page
+4. Each card shows capture time + tag chips (Te Kaha camera, UTC day, day phase, visibility)
+5. Click thumbnail for lightbox
+
+The UI demonstrates **consumer reads annotation-backed metadata** — the same JSON you see in `get-object-annotation`.
+
+<Aside type="note">
+  Gallery shows **503 Service Unavailable**? The API Lambda likely exceeded API Gateway's 30s limit — common with **filtered** loads on a large bucket. See [Performance and API Gateway limits](/pipeline-deep-dive/api-query-and-presign/#performance-and-api-gateway-limits).
+</Aside>
+
+## Manual frontend deploy
+
+```bash
+AMPLIFY_APP_ID=$(terraform -chdir=terraform output -raw amplify_app_id)
+VITE_API_URL=$(terraform -chdir=terraform output -raw api_invoke_url)
+./scripts/deploy-amplify.sh
+```

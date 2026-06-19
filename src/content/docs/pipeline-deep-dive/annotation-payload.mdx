@@ -1,0 +1,56 @@
+---
+title: "Annotation payload"
+description: "JSON schema for S3 Annotation payloads — filterable gallery fields, provenance, and example output."
+---
+
+`schema_version` and `model` record which JSON shape and which ingest logic wrote the annotation — handy after you redeploy Lambda and re-ingest only some objects.
+
+## Fields the gallery uses (four filterable tags)
+
+| Field        | Source                         | Example    |
+| ------------ | ------------------------------ | ---------- |
+| `camera_id`  | Object key                     | `TKAH.01`  |
+| `utc_day`    | Object key                     | `2026.170` |
+| `day_phase`  | Filename UTC + camera timezone | `dusk`     |
+| `visibility` | Pixel brightness               | `daylight` |
+
+`day_phase` values: `night` · `dawn` · `day` · `dusk` (time of capture).  
+`visibility` values: `daylight` · `low_light` · `night` (image brightness).
+
+Both fields can be `night` independently — e.g. a `dusk` capture with `low_light` visibility.
+
+## Provenance and ops fields (stored, not emphasized in UI)
+
+| Field                          | Purpose                                             |
+| ------------------------------ | --------------------------------------------------- |
+| `schema_version`               | Payload shape version (`"1"`)                       |
+| `model`                        | Ingest/classifier version (`metadata-luminance-v1`) |
+| `volcano_site`                 | Site code from key                                  |
+| `captured_utc`                 | ISO 8601 from filename                              |
+| `source_bucket` / `source_key` | GeoNet lineage                                      |
+| `ingest_run_id`                | Groups one ingest invocation                        |
+| `ingested_at` / `updated_at`   | Write timestamps                                    |
+
+## Example JSON
+
+Same payload shape as the [CLI sample on the introduction page](/introduction/what-are-s3-annotations/#inspect-an-annotation) (`get-object-annotation` on `2026.170.0800.00.TKAH.01.jpg`):
+
+```json
+{
+  "schema_version": "1",
+  "camera_id": "TKAH.01",
+  "volcano_site": "TKAH",
+  "utc_day": "2026.170",
+  "captured_utc": "2026-06-19T08:00:00Z",
+  "day_phase": "dusk",
+  "visibility": "daylight",
+  "model": "metadata-luminance-v1",
+  "source_bucket": "geonet-open-data",
+  "source_key": "camera/volcano/images/2026/TKAH/TKAH.01/2026.170/2026.170.0800.00.TKAH.01.jpg",
+  "ingest_run_id": "49f52ccc-2b61-4e1b-91c0-04440e479686",
+  "ingested_at": "2026-06-19T08:57:20Z",
+  "updated_at": "2026-06-19T08:57:20Z"
+}
+```
+
+Tags are intentionally simple and verifiable — the walkthrough focus is **annotate → store → query**, not ML accuracy.

@@ -1,0 +1,35 @@
+import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
+
+const OG_IMAGE_PATH = "/s3-annotations-walkthrough/og-image.png";
+const OG_IMAGE_ALT =
+  "S3 Annotations Walkthrough — metadata on the S3 object, write at ingest, read at query time";
+
+export const onRequest = defineRouteMiddleware((context) => {
+  const { head } = context.locals.starlightRoute;
+  const ogImageUrl = new URL(OG_IMAGE_PATH, context.site);
+
+  head.push({
+    tag: "meta",
+    attrs: { property: "og:image", content: ogImageUrl.href },
+  });
+  head.push({
+    tag: "meta",
+    attrs: { property: "og:image:width", content: "1200" },
+  });
+  head.push({
+    tag: "meta",
+    attrs: { property: "og:image:height", content: "630" },
+  });
+  head.push({
+    tag: "meta",
+    attrs: { property: "og:image:alt", content: OG_IMAGE_ALT },
+  });
+  head.push({
+    tag: "meta",
+    attrs: { name: "twitter:card", content: "summary_large_image" },
+  });
+  head.push({
+    tag: "meta",
+    attrs: { name: "twitter:image", content: ogImageUrl.href },
+  });
+});

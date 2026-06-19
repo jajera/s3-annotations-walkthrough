@@ -1,0 +1,56 @@
+---
+title: S3 Annotations Walkthrough
+description: A guided walkthrough of the terraform-aws-s3-annotations-demo — S3 Annotations, serverless ingest, and a filterable image gallery.
+template: splash
+hero:
+  tagline: Learn how Amazon S3 Annotations attach structured JSON metadata directly to objects — demonstrated on live volcano camera imagery from Aotearoa New Zealand, one GeoNet site at a time.
+  actions:
+    - text: Get Started
+      link: /introduction/what-are-s3-annotations/
+      icon: right-arrow
+      variant: primary
+    - text: View on GitHub
+      link: https://github.com/jajera/terraform-aws-s3-annotations-demo
+      icon: external
+---
+
+import { Card, CardGrid } from "@astrojs/starlight/components";
+
+This site documents the [terraform-aws-s3-annotations-demo](https://github.com/jajera/terraform-aws-s3-annotations-demo) project — clone that repository to run Terraform, Lambda, and CLI commands shown in the walkthrough.
+
+## Why volcano cameras?
+
+Aotearoa New Zealand sits on the Pacific Ring of Fire. [GeoNet](https://www.geonet.org.nz/) sensor feeds are watched 24/7 at the [National Geohazards Monitoring Centre](https://www.geonet.org.nz/ngmc) (NGMC); volcano camera JPEGs are published as open data on `s3://geonet-open-data`.
+
+This walkthrough uses **one** site — **Te Kaha** (`TKAH.01`) on the Bay of Plenty coast, facing Whakaari/White Island. Copy each 10-minute JPEG, attach JSON with S3 Annotations, filter in a gallery.
+
+I was fortunate to support the cloud infrastructure behind that stack for a time. This demo is separate work — Te Kaha was just a familiar feed.
+
+## What you'll walk through
+
+<CardGrid>
+  <Card title="S3 Annotations" icon="open-book">
+    What annotations are, how they colocate metadata with objects, IAM
+    requirements, and platform tradeoffs.
+  </Card>
+  <Card title="Architecture" icon="puzzle">
+    End-to-end pipeline — GeoNet ingest, private S3 storage, API query, and
+    Amplify gallery.
+  </Card>
+  <Card title="Deploy and Operate" icon="rocket">
+    Prerequisites, terraform apply, manual ingest, optional scheduler, and
+    teardown.
+  </Card>
+  <Card title="Pipeline Deep Dive" icon="setting">
+    Ingest handler, annotation JSON payload, GET /images API, and optional
+    DynamoDB mirror.
+  </Card>
+  <Card title="Gallery and Presentation" icon="laptop">
+    Amplify filter UI, tag chips, and a suggested presenter script for live
+    demos.
+  </Card>
+  <Card title="Reference" icon="document">
+    Demo project file map, external links (AWS docs, GeoNet), and local pytest
+    instructions.
+  </Card>
+</CardGrid>
