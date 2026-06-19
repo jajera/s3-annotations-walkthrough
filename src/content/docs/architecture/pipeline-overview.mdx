@@ -1,0 +1,54 @@
+---
+title: "Pipeline overview"
+description: "End-to-end architecture for the S3 Annotations demo — GeoNet ingest, private S3 storage, API query, and Amplify gallery."
+---
+
+import DocsImage from "../../../components/DocsImage.astro";
+import Tooltip from "@/components/Tooltip.astro";
+
+See [Why volcano cameras?](/) for dataset context. This demo pins to one <Tooltip term="te-kaha" label="Te Kaha" /> camera (`TKAH.01`); the pipeline below is generic.
+
+<DocsImage
+  src="images/architecture.png"
+  alt="S3 Annotations demo architecture — GeoNet ingest, private S3 with annotations, API, and Amplify gallery"
+/>
+
+End-to-end flow in `ap-southeast-2`:
+
+1. **Source** — <Tooltip term="geonet" label="GeoNet Aotearoa New Zealand Data" /> ([AWS Open Data Registry](https://registry.opendata.aws/geonet/), `s3://geonet-open-data`) publishes <Tooltip term="te-kaha" label="Te Kaha" /> volcano camera JPEGs (no account required to read).
+2. **Ingest** — `volcano-ingest` <Tooltip term="lambda" label="Lambda" /> lists the last **7 UTC days** of keys, copies each JPEG into a **private bucket**, derives simple tags from the key path and pixel brightness, and writes an <Tooltip term="s3-annotations" label="S3 Annotation" /> (<Tooltip term="environment" label="environment" /> namespace) on the same object.
+3. **Store** — The private bucket is the **source of truth**: each JPEG carries its JSON metadata via S3 Annotations. An optional <Tooltip term="dynamodb" label="DynamoDB" /> table mirrors annotation fields for faster reads at larger scale.
+4. **Query** — `volcano-api` Lambda (behind <Tooltip term="api-gateway" label="API Gateway" /> `GET /images`) reads annotations, applies filters (`day_phase`, `utc_day`, `visibility`), paginates with `offset` + `limit`, and returns presigned image URLs.
+5. **Gallery** — <Tooltip term="amplify" label="Amplify" />-hosted React SPA calls the API, shows a result count, paginates, and renders tag chips from the same annotation JSON you see in the S3 console.
+
+## Components
+
+| Component             | AWS service                                        | Role                                                        |
+| --------------------- | -------------------------------------------------- | ----------------------------------------------------------- |
+| GeoNet open bucket    | S3 (public)                                        | Source JPEGs — `camera/volcano/images/.../TKAH/TKAH.01/...` |
+| EventBridge Scheduler | <Tooltip term="eventbridge" label="EventBridge" /> | Optional one-time ingest trigger (`enable_scheduler`)       |
+| Ingest Lambda         | Lambda (Python 3.14)                               | Copy images, `put_object_annotation`                        |
+| Private bucket        | S3                                                 | Images + annotations (canonical metadata)                   |
+| DynamoDB              | DynamoDB                                           | Optional denormalized mirror (`enable_dynamodb`)            |
+| API Lambda            | Lambda (Python 3.14)                               | `get_object_annotation`, filter, presign                    |
+| HTTP API              | API Gateway v2                                     | `GET /images` with CORS                                     |
+| Gallery               | Amplify Hosting                                    | React UI — filters, count, pagination                       |
+
+**Data source prefix:** `camera/volcano/images/{YYYY}/TKAH/TKAH.01/{YYYY.DDD}/*.jpg` — <Tooltip term="tkah" label="TKAH" /> site code for the <Tooltip term="te-kaha" label="Te Kaha" /> camera (`TKAH.01`).
+
+## Terraform outputs
+
+After apply:
+
+```bash
+cd terraform
+terraform output amplify_app_url
+terraform output api_invoke_url
+terraform output private_bucket_name
+```
+
+Or from the demo repository root:
+
+```bash
+terraform -chdir=terraform output amplify_app_url
+```

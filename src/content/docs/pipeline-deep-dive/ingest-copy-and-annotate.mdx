@@ -1,0 +1,32 @@
+---
+title: "Ingest: copy and annotate"
+description: "How the volcano-ingest Lambda copies GeoNet images and writes S3 Annotations on each object."
+---
+
+import { Aside } from "@astrojs/starlight/components";
+
+**Lambda:** `volcano-ingest`  
+**Code:** `lambda/ingest_annotate/handler.py` (in the [demo repo](https://github.com/jajera/terraform-aws-s3-annotations-demo))
+
+Ingest lists only keys under `camera/volcano/images/.../TKAH/TKAH.01/` — the Te Kaha camera — not every GeoNet volcano site.
+
+Per image (over the **last 7 UTC days** by default, `INGEST_LOOKBACK_DAYS`):
+
+1. List `.jpg` keys from GeoNet for each day in the lookback window
+2. `PutObject` copy to private bucket (same key)
+3. Parse key → `camera_id`, `utc_day`, `captured_utc`, …
+4. Derive `day_phase` and `visibility` from clock + pixel brightness
+5. **`put_object_annotation`** with namespace `environment`
+6. Optionally mirror key fields to DynamoDB
+
+<Aside type="note">
+  **`INGEST_LOOKBACK_DAYS`** controls how many UTC days of GeoNet images are copied into the private bucket (default **7**, set in `terraform/lambda.tf`). A wider window means more objects — unfiltered gallery loads stay fast, but [filtered API queries](/pipeline-deep-dive/api-query-and-presign/#performance-and-api-gateway-limits) scan every annotation and may hit API Gateway's 30s timeout.
+</Aside>
+
+## Object key pattern
+
+```text
+camera/volcano/images/{YYYY}/TKAH/TKAH.01/{YYYY.DDD}/{YYYY}.{DDD}.{HHmm}.{ss}.{camera_id}.jpg
+```
+
+Keys that fail parsing are copied but not annotated.

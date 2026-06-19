@@ -1,0 +1,18 @@
+---
+title: "Optional DynamoDB mirror"
+description: "When to enable the optional DynamoDB read index and why S3 Annotations remain the canonical metadata source."
+---
+
+**Flag:** `enable_dynamodb = true` in `terraform.tfvars`
+
+Because S3 Annotations have [no server-side query](/introduction/what-are-s3-annotations/#no-server-side-query), DynamoDB is an optional **read index** — not a replacement for canonical metadata on the object.
+
+|                 | S3 Annotations (default)         | + DynamoDB                   |
+| --------------- | -------------------------------- | ---------------------------- |
+| Source of truth | S3                               | S3                           |
+| API read        | Parallel `GetObjectAnnotation`   | Table scan + filter          |
+| Best for        | Demo scale (tens–hundreds)       | Scale; heavy filter use      |
+
+Ingest writes S3 Annotation first; DynamoDB is a denormalized copy. No backfill on enable — re-run ingest.
+
+Enable **`enable_dynamodb = true`** when filtered gallery queries return HTTP 503 or when the private bucket grows beyond a comfortable demo size. The API switches to a DynamoDB scan instead of N parallel `GetObjectAnnotation` calls. S3 annotations remain canonical — see [API performance](/pipeline-deep-dive/api-query-and-presign/#performance-and-api-gateway-limits) for why filtered reads are expensive without an index.

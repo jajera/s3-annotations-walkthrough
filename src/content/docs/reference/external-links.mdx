@@ -1,0 +1,24 @@
+---
+title: "External links"
+description: "Further reading — S3 Annotations launch posts and docs, GeoNet open data, and this walkthrough's source repositories."
+---
+
+## This walkthrough
+
+- [Live site](https://jajera.github.io/s3-annotations-walkthrough/)
+- [s3-annotations-walkthrough](https://github.com/jajera/s3-annotations-walkthrough) — this documentation site
+- [terraform-aws-s3-annotations-demo](https://github.com/jajera/terraform-aws-s3-annotations-demo) — Terraform, Lambda, and gallery source (clone this to run commands in the walkthrough)
+
+## Amazon S3 Annotations
+
+- [Annotating your objects](https://docs.aws.amazon.com/AmazonS3/latest/userguide/annotations-overview.html) — AWS documentation (API operations, limits, versioning, platform considerations)
+- [Amazon S3 annotations: attach rich, queryable context directly to your objects](https://aws.amazon.com/blogs/aws/amazon-s3-annotations-attach-rich-queryable-context-directly-to-your-objects/) — AWS News Blog launch post (Jun 16, 2026)
+- [Amazon S3 adds annotations for AI agents and analytics](https://aws.amazon.com/about-aws/whats-new/2026/06/amazon-s3-annotations-business-context/) — What's New announcement (Jun 16, 2026)
+
+This demo uses `PutObjectAnnotation` and `GetObjectAnnotation` only. It does **not** enable S3 Metadata annotation tables or Athena query — see [no server-side query](/introduction/what-are-s3-annotations/#no-server-side-query).
+
+## Aotearoa New Zealand dataset
+
+- [GeoNet](https://www.geonet.org.nz/) — geological hazard monitoring programme
+- [National Geohazards Monitoring Centre (NGMC)](https://www.geonet.org.nz/ngmc) — 24/7 geohazard monitoring (_Te Puna Mōrearea i te Rū_)
+- [GeoNet on the AWS Open Data Registry](https://registry.opendata.aws/geonet/) — `s3://geonet-open-data` (volcano camera JPEGs used by this demo)

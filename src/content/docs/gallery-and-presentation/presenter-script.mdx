@@ -1,0 +1,21 @@
+---
+title: "Presenter script"
+description: "Suggested ~30–45 minute demo flow for presenting S3 Annotations with the volcano camera pipeline."
+---
+
+Suggested flow (~30–45 min), **S3 Annotations first**:
+
+0. **Setting** — Brief context from [home](/): Aotearoa New Zealand volcano monitoring, one GeoNet camera (Te Kaha `TKAH.01`). Focus is S3 Annotations, not volcanology.
+1. **Problem** — images in S3, metadata elsewhere; annotations colocate metadata with objects
+2. **Tradeoff** — [no server-side query](/introduction/what-are-s3-annotations/#no-server-side-query); N reads + app-side filter; optional DynamoDB index
+3. **Architecture** — ingest writes, API reads, gallery consumes ([diagram](/architecture/pipeline-overview/))
+4. **`terraform apply`** — show outputs (bucket, API URL, gallery URL)
+5. **Ingest** — invoke Lambda; show `images_annotated` count
+6. **S3 console** — open a JPEG → **Annotations** tab → show `environment` JSON
+7. **CLI** — `aws s3api get-object-annotation` ([command](/introduction/what-are-s3-annotations/#inspect-an-annotation)); optional `list-object-annotations`
+8. **API** — `curl /images?utc_day=...` — point out `tags` vs `image_url`
+9. **Gallery** — Apply Filters; same fields as annotation JSON
+10. **Optional** — [Annotations vs tags/sidecars](/introduction/what-are-s3-annotations/#annotations-vs-other-s3-metadata), [IAM](/introduction/what-are-s3-annotations/#iam-permissions), DynamoDB mirror for scale
+11. **Teardown** — `terraform destroy`; annotations gone with bucket
+
+**Talking point:** Re-ingest overwrites the annotation on the same object (`put_object_annotation`) — metadata version travels with the asset.
