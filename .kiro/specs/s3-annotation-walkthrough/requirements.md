@@ -117,7 +117,7 @@ The project uses Vitest with fast-check for property-based testing, Prettier for
 
    | Section group            | Page slug                                         | Page title                                 |
    | ------------------------ | ------------------------------------------------- | ------------------------------------------ |
-   | _(root)_                 | `index`                                           | S3 Annotations Walkthrough                  |
+   | _(root)_                 | `index`                                           | S3 Annotations Walkthrough                 |
    | Introduction             | `introduction/what-are-s3-annotations`            | What are S3 Annotations?                   |
    | Architecture             | `architecture/pipeline-overview`                  | Pipeline overview                          |
    | Deploy and Operate       | `deploy-and-operate/prerequisites-apply-teardown` | Prerequisites, apply, ingest, and teardown |

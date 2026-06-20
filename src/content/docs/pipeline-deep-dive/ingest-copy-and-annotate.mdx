@@ -20,7 +20,12 @@ Per image (over the **last 7 UTC days** by default, `INGEST_LOOKBACK_DAYS`):
 6. Optionally mirror key fields to DynamoDB
 
 <Aside type="note">
-  **`INGEST_LOOKBACK_DAYS`** controls how many UTC days of GeoNet images are copied into the private bucket (default **7**, set in `terraform/lambda.tf`). A wider window means more objects — unfiltered gallery loads stay fast, but [filtered API queries](/pipeline-deep-dive/api-query-and-presign/#performance-and-api-gateway-limits) scan every annotation and may hit API Gateway's 30s timeout.
+  **`INGEST_LOOKBACK_DAYS`** controls how many UTC days of GeoNet images are
+  copied into the private bucket (default **7**, set in `terraform/lambda.tf`).
+  A wider window means more objects — unfiltered gallery loads stay fast, but
+  [filtered API
+  queries](/pipeline-deep-dive/api-query-and-presign/#performance-and-api-gateway-limits)
+  scan every annotation and may hit API Gateway's 30s timeout.
 </Aside>
 
 ## Object key pattern

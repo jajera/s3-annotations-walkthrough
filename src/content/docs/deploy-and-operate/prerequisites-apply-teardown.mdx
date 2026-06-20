@@ -89,10 +89,10 @@ Response body includes `images_copied`, `images_annotated`, `annotation_failures
 
 ## Troubleshooting
 
-| Symptom | Likely cause | What to do |
-| ------- | ------------ | ---------- |
-| Gallery **503** on **Apply Filters** | Filtered API scan timed out (30s API Gateway limit) | Reduce bucket size (`INGEST_LOOKBACK_DAYS`), enable [DynamoDB mirror](/pipeline-deep-dive/optional-dynamodb-mirror/), or see [API performance](/pipeline-deep-dive/api-query-and-presign/#performance-and-api-gateway-limits) |
-| Gallery **503** on first load (no filters) | Old API handler or very large bucket | `terraform apply` to pick up page-first fetching; consider teardown + re-apply |
+| Symptom                                    | Likely cause                                        | What to do                                                                                                                                                                                                                    |
+| ------------------------------------------ | --------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Gallery **503** on **Apply Filters**       | Filtered API scan timed out (30s API Gateway limit) | Reduce bucket size (`INGEST_LOOKBACK_DAYS`), enable [DynamoDB mirror](/pipeline-deep-dive/optional-dynamodb-mirror/), or see [API performance](/pipeline-deep-dive/api-query-and-presign/#performance-and-api-gateway-limits) |
+| Gallery **503** on first load (no filters) | Old API handler or very large bucket                | `terraform apply` to pick up page-first fetching; consider teardown + re-apply                                                                                                                                                |
 
 ## Teardown
 

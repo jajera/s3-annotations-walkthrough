@@ -65,10 +65,10 @@ There is **no bucket-level annotation query** — the API implements search itse
 
 The handler uses **two strategies** depending on whether query filters are present:
 
-| Request | Annotation reads | Why |
-| ------- | ---------------- | --- |
-| **No filters** (default gallery load) | Current page only (~24 keys) | Stays within API Gateway's 30s integration timeout |
-| **With filters** (`day_phase`, `utc_day`, `visibility`) | Every object in the bucket | Needs a full scan to return an accurate `total_available` for pagination |
+| Request                                                 | Annotation reads             | Why                                                                      |
+| ------------------------------------------------------- | ---------------------------- | ------------------------------------------------------------------------ |
+| **No filters** (default gallery load)                   | Current page only (~24 keys) | Stays within API Gateway's 30s integration timeout                       |
+| **With filters** (`day_phase`, `utc_day`, `visibility`) | Every object in the bucket   | Needs a full scan to return an accurate `total_available` for pagination |
 
 **Unfiltered flow** (`lambda/api/handler.py`):
 
@@ -89,7 +89,9 @@ Images always come from S3; annotations supply metadata only.
 ## Performance and API Gateway limits
 
 <Aside type="caution">
-  API Gateway has a **hard 30-second integration timeout** for Lambda. The API Lambda timeout is set to **29s** in `terraform/lambda.tf` — there is no headroom beyond that ceiling.
+  API Gateway has a **hard 30-second integration timeout** for Lambda. The API
+  Lambda timeout is set to **29s** in `terraform/lambda.tf` — there is no
+  headroom beyond that ceiling.
 </Aside>
 
 ### Symptom: HTTP 503 from the gallery
@@ -104,12 +106,12 @@ Early versions of the demo hit this on **unfiltered** loads: the handler listed 
 
 ### What the demo does today
 
-| Change | Where | Effect |
-| ------ | ----- | ------ |
-| Page-first fetch (no filters) | `lambda/api/handler.py` | Default gallery load reads ~24 annotations, not the whole bucket |
-| Memory **512 MB** | `terraform/lambda.tf` | More CPU for parallel S3 I/O |
-| **`ANNOTATION_FETCH_WORKERS=48`** | API Lambda env | Higher parallelism for filtered scans |
-| Timeout **29s** | `terraform/lambda.tf` | Stays under API Gateway's 30s cap |
+| Change                            | Where                   | Effect                                                           |
+| --------------------------------- | ----------------------- | ---------------------------------------------------------------- |
+| Page-first fetch (no filters)     | `lambda/api/handler.py` | Default gallery load reads ~24 annotations, not the whole bucket |
+| Memory **512 MB**                 | `terraform/lambda.tf`   | More CPU for parallel S3 I/O                                     |
+| **`ANNOTATION_FETCH_WORKERS=48`** | API Lambda env          | Higher parallelism for filtered scans                            |
+| Timeout **29s**                   | `terraform/lambda.tf`   | Stays under API Gateway's 30s cap                                |
 
 Unfiltered gallery loads typically complete in a few seconds. Pagination and presigned URLs are unchanged.
 
@@ -122,5 +124,8 @@ Filtered queries still scan **all** annotations — that cost grows with bucket 
 - **Heavy filter use** in the gallery — every **Apply Filters** triggers a full annotation scan.
 
 <Aside type="note">
-  **Mitigations:** keep the default 7-day lookback for demos; enable the [optional DynamoDB mirror](/pipeline-deep-dive/optional-dynamodb-mirror/) for larger catalogs or frequent filtered queries; redeploy after pulling API handler changes (`cd terraform && terraform apply`).
+  **Mitigations:** keep the default 7-day lookback for demos; enable the
+  [optional DynamoDB mirror](/pipeline-deep-dive/optional-dynamodb-mirror/) for
+  larger catalogs or frequent filtered queries; redeploy after pulling API
+  handler changes (`cd terraform && terraform apply`).
 </Aside>
