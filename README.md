@@ -57,6 +57,10 @@ Run the full quality gate before committing:
 npm run validate && npm run test && npm run build
 ```
 
+## CI
+
+Pull requests run [`.github/workflows/ci.yml`](.github/workflows/ci.yml) — markdown lint and commit message checks via [actionsforge/actions](https://github.com/actionsforge/actions).
+
 ## Deployment
 
 Pushes to `main` trigger
