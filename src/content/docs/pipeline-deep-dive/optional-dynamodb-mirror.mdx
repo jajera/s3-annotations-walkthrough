@@ -7,11 +7,11 @@ description: "When to enable the optional DynamoDB read index and why S3 Annotat
 
 Because S3 Annotations have [no server-side query](/introduction/what-are-s3-annotations/#no-server-side-query), DynamoDB is an optional **read index** — not a replacement for canonical metadata on the object.
 
-|                 | S3 Annotations (default)         | + DynamoDB                   |
-| --------------- | -------------------------------- | ---------------------------- |
-| Source of truth | S3                               | S3                           |
-| API read        | Parallel `GetObjectAnnotation`   | Table scan + filter          |
-| Best for        | Demo scale (tens–hundreds)       | Scale; heavy filter use      |
+|                 | S3 Annotations (default)       | + DynamoDB              |
+| --------------- | ------------------------------ | ----------------------- |
+| Source of truth | S3                             | S3                      |
+| API read        | Parallel `GetObjectAnnotation` | Table scan + filter     |
+| Best for        | Demo scale (tens–hundreds)     | Scale; heavy filter use |
 
 Ingest writes S3 Annotation first; DynamoDB is a denormalized copy. No backfill on enable — re-run ingest.
 

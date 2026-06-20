@@ -66,11 +66,15 @@ Say plainly: _annotations colocate metadata; they do not replace a query engine.
 />
 
 <Aside type="caution">
-  **AWS CLI** ≥ 2.35.6 — `list-object-annotations` and `get-object-annotation` are new in CLI v2. Older installs fail with an unknown operation. Run `aws --version` before the examples below.
+  **AWS CLI** ≥ 2.35.6 — `list-object-annotations` and `get-object-annotation`
+  are new in CLI v2. Older installs fail with an unknown operation. Run `aws
+  --version` before the examples below.
 </Aside>
 
 <Aside type="caution">
-  **boto3** ≥ 1.43.32 — ingest and API Lambdas use `put_object_annotation` / `get_object_annotation`. Older boto3 builds do not include the S3 Annotations API.
+  **boto3** ≥ 1.43.32 — ingest and API Lambdas use `put_object_annotation` /
+  `get_object_annotation`. Older boto3 builds do not include the S3 Annotations
+  API.
 </Aside>
 
 To see which namespaces exist on an object, from the **demo repository root**:
@@ -126,7 +130,8 @@ Annotation access is **explicit IAM** on the private bucket (`terraform/iam.tf`)
 | API Lambda    | `s3:GetObject`, `s3:GetObjectAnnotation`, `s3:ListBucket` | Read annotation, presign image |
 
 <Aside type="note">
-  Reading or writing annotations requires `s3:GetObjectAnnotation` / `s3:PutObjectAnnotation` — object permissions alone are not enough.
+  Reading or writing annotations requires `s3:GetObjectAnnotation` /
+  `s3:PutObjectAnnotation` — object permissions alone are not enough.
 </Aside>
 
 ### Platform limitations
@@ -141,7 +146,9 @@ Do not assume annotations work everywhere S3 does. AWS documents cases where ann
 - S3 Express One Zone (directory buckets)
 
 <Aside type="note">
-  This demo uses **API Gateway** to invoke Lambda; Lambda reads annotations via the S3 API. API Gateway does not expose S3 Annotations directly — your app code (here, the API Lambda) calls S3.
+  This demo uses **API Gateway** to invoke Lambda; Lambda reads annotations via
+  the S3 API. API Gateway does not expose S3 Annotations directly — your app
+  code (here, the API Lambda) calls S3.
 </Aside>
 
 ## Core API surface
