@@ -77,17 +77,8 @@ export default defineConfig({
           ],
         },
         {
-          label: "Gallery and Presentation",
-          items: [
-            {
-              label: "Amplify gallery",
-              slug: "gallery-and-presentation/amplify-gallery",
-            },
-            {
-              label: "Presenter script",
-              slug: "gallery-and-presentation/presenter-script",
-            },
-          ],
+          label: "Gallery",
+          slug: "gallery-and-presentation/amplify-gallery",
         },
         {
           label: "Reference",

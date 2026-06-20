@@ -16,14 +16,14 @@ single file in the demo repo
 ([`docs/walkthrough.md`](https://github.com/jajera/terraform-aws-s3-annotations-demo/blob/main/docs/walkthrough.md)).
 Content is split into navigable pages:
 
-| Section                  | Topics                                                    |
-| ------------------------ | --------------------------------------------------------- |
-| Introduction             | What S3 Annotations are, tradeoffs, IAM, platform limits  |
-| Architecture             | Ingest → store → query → gallery pipeline                 |
-| Deploy and Operate       | Prerequisites, `terraform apply`, ingest, teardown        |
-| Pipeline Deep Dive       | Ingest, annotation payload, API, optional DynamoDB mirror |
-| Gallery and Presentation | Amplify UI and presenter script                           |
-| Reference                | Demo project file map and build notes                     |
+| Section            | Topics                                                    |
+| ------------------ | --------------------------------------------------------- |
+| Introduction       | What S3 Annotations are, tradeoffs, IAM, platform limits  |
+| Architecture       | Ingest → store → query → gallery pipeline                 |
+| Deploy and Operate | Prerequisites, `terraform apply`, ingest, teardown        |
+| Pipeline Deep Dive | Ingest, annotation payload, API, optional DynamoDB mirror |
+| Gallery            | Amplify UI                                                |
+| Reference          | Demo project file map and build notes                     |
 
 ## Prerequisites
 

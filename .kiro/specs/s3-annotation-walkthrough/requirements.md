@@ -85,10 +85,9 @@ The project uses Vitest with fast-check for property-based testing, Prettier for
 8. THE Site SHALL include a Content_Page at `src/content/docs/pipeline-deep-dive/api-query-and-presign.mdx` migrated from Source_Material section "API: read annotations + presign images", including query parameters, response shape, pagination (`offset`, `limit`), and the default read path (list keys → parallel `GetObjectAnnotation` → filter)
 9. THE Site SHALL include a Content_Page at `src/content/docs/pipeline-deep-dive/optional-dynamodb-mirror.mdx` migrated from Source_Material section "Optional DynamoDB mirror", including when to enable it and that S3 remains canonical
 10. THE Site SHALL include a Content_Page at `src/content/docs/gallery-and-presentation/amplify-gallery.mdx` migrated from Source_Material section "Gallery (Amplify)", including filter UI behavior, pagination, tag chips, and manual `./scripts/deploy-amplify.sh` deploy
-11. THE Site SHALL include a Content_Page at `src/content/docs/gallery-and-presentation/presenter-script.mdx` migrated from Source_Material section "Presenter script", including the suggested ~30–45 minute demo flow
-12. THE Site SHALL include a Content_Page at `src/content/docs/reference/demo-file-map.mdx` migrated from Source_Material section "File reference" and "Build notes", including paths to Lambda, Terraform, Amplify, scripts, sample images (`samples/volcano/`), boto3 ≥ 1.43 requirement, and local pytest instructions
-13. WHEN migrating content from Source_Material, THE Content_Page SHALL preserve substantive tables, CLI commands, JSON examples, and external links (GeoNet open data, AWS Registry of Open Data, Te Kaha camera page) present in the source section
-14. THE Content_Page body (excluding frontmatter) SHALL NOT be empty for any page listed in this requirement
+11. THE Site SHALL include a Content_Page at `src/content/docs/reference/demo-file-map.mdx` migrated from Source_Material section "File reference" and "Build notes", including paths to Lambda, Terraform, Amplify, scripts, sample images (`samples/volcano/`), boto3 ≥ 1.43 requirement, and local pytest instructions
+12. WHEN migrating content from Source_Material, THE Content_Page SHALL preserve substantive tables, CLI commands, JSON examples, and external links (GeoNet open data, AWS Registry of Open Data, Te Kaha camera page) present in the source section
+13. THE Content_Page body (excluding frontmatter) SHALL NOT be empty for any page listed in this requirement
 
 ### Requirement 4: Content Page Format
 
@@ -115,19 +114,18 @@ The project uses Vitest with fast-check for property-based testing, Prettier for
 1. THE Sidebar_Navigation SHALL be configured in `astro.config.mjs` using Starlight sidebar items
 2. THE Sidebar_Navigation SHALL define the following section groups, labels, and page slugs in reading order:
 
-   | Section group            | Page slug                                         | Page title                                 |
-   | ------------------------ | ------------------------------------------------- | ------------------------------------------ |
-   | _(root)_                 | `index`                                           | S3 Annotations Walkthrough                 |
-   | Introduction             | `introduction/what-are-s3-annotations`            | What are S3 Annotations?                   |
-   | Architecture             | `architecture/pipeline-overview`                  | Pipeline overview                          |
-   | Deploy and Operate       | `deploy-and-operate/prerequisites-apply-teardown` | Prerequisites, apply, ingest, and teardown |
-   | Pipeline Deep Dive       | `pipeline-deep-dive/ingest-copy-and-annotate`     | Ingest: copy and annotate                  |
-   | Pipeline Deep Dive       | `pipeline-deep-dive/annotation-payload`           | Annotation payload                         |
-   | Pipeline Deep Dive       | `pipeline-deep-dive/api-query-and-presign`        | API: query and presign                     |
-   | Pipeline Deep Dive       | `pipeline-deep-dive/optional-dynamodb-mirror`     | Optional DynamoDB mirror                   |
-   | Gallery and Presentation | `gallery-and-presentation/amplify-gallery`        | Amplify gallery                            |
-   | Gallery and Presentation | `gallery-and-presentation/presenter-script`       | Presenter script                           |
-   | Reference                | `reference/demo-file-map`                         | Demo project file map                      |
+   | Section group      | Page slug                                         | Page title                                 |
+   | ------------------ | ------------------------------------------------- | ------------------------------------------ |
+   | _(root)_           | `index`                                           | S3 Annotations Walkthrough                 |
+   | Introduction       | `introduction/what-are-s3-annotations`            | What are S3 Annotations?                   |
+   | Architecture       | `architecture/pipeline-overview`                  | Pipeline overview                          |
+   | Deploy and Operate | `deploy-and-operate/prerequisites-apply-teardown` | Prerequisites, apply, ingest, and teardown |
+   | Pipeline Deep Dive | `pipeline-deep-dive/ingest-copy-and-annotate`     | Ingest: copy and annotate                  |
+   | Pipeline Deep Dive | `pipeline-deep-dive/annotation-payload`           | Annotation payload                         |
+   | Pipeline Deep Dive | `pipeline-deep-dive/api-query-and-presign`        | API: query and presign                     |
+   | Pipeline Deep Dive | `pipeline-deep-dive/optional-dynamodb-mirror`     | Optional DynamoDB mirror                   |
+   | Gallery            | `gallery-and-presentation/amplify-gallery`        | Gallery                                    |
+   | Reference          | `reference/demo-file-map`                         | Demo project file map                      |
 
 3. THE Sidebar_Navigation SHALL order pages within each section to follow a logical reading progression from introduction to advanced topics
 4. WHEN a reader navigates the sidebar, THE Site SHALL highlight the currently active page
