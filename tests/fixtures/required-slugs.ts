@@ -8,7 +8,6 @@ export const REQUIRED_SLUGS = [
   "pipeline-deep-dive/api-query-and-presign",
   "pipeline-deep-dive/optional-dynamodb-mirror",
   "gallery-and-presentation/amplify-gallery",
-  "gallery-and-presentation/presenter-script",
   "reference/demo-file-map",
   "reference/external-links",
 ] as const;

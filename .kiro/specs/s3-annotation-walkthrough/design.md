@@ -111,8 +111,7 @@ s3-annotations-walkthrough/
 │   │   │   │   ├── api-query-and-presign.mdx
 │   │   │   │   └── optional-dynamodb-mirror.mdx
 │   │   │   ├── gallery-and-presentation/
-│   │   │   │   ├── amplify-gallery.mdx
-│   │   │   │   └── presenter-script.mdx
+│   │   │   │   └── amplify-gallery.mdx
 │   │   │   └── reference/
 │   │   │       └── demo-file-map.mdx
 │   │   └── config.ts               # Content collection schema
@@ -230,17 +229,8 @@ export default defineConfig({
           ],
         },
         {
-          label: "Gallery and Presentation",
-          items: [
-            {
-              label: "Amplify gallery",
-              slug: "gallery-and-presentation/amplify-gallery",
-            },
-            {
-              label: "Presenter script",
-              slug: "gallery-and-presentation/presenter-script",
-            },
-          ],
+          label: "Gallery",
+          slug: "gallery-and-presentation/amplify-gallery",
         },
         {
           label: "Reference",
@@ -276,8 +266,7 @@ Content is migrated from **Source_Material** in the demo repository. The table b
 | `pipeline-deep-dive/api-query-and-presign.mdx`        | §6 API: read annotations + presign images | —                                                                          |
 | `pipeline-deep-dive/optional-dynamodb-mirror.mdx`     | §7 Optional DynamoDB mirror               | `enable_dynamodb` variable                                                 |
 | `gallery-and-presentation/amplify-gallery.mdx`        | §8 Gallery (Amplify)                      | Manual `deploy-amplify.sh`                                                 |
-| `gallery-and-presentation/presenter-script.mdx`       | §9 Presenter script                       | —                                                                          |
-| `reference/demo-file-map.mdx`                         | §10 File reference + Build notes          | Sample images, pytest instructions                                         |
+| `reference/demo-file-map.mdx`                         | §9 File reference + Build notes           | Sample images, pytest instructions                                         |
 
 **Cross-page link updates:** internal anchor links in `walkthrough.md` (e.g. `#no-server-side-query`) become relative links between MDX pages (e.g. from API page to introduction page heading).
 
@@ -288,7 +277,7 @@ The landing page is not a sidebar group — it is the site root. Required conten
 - GeoNet open-data volcano camera demo context and Te Kaha (`TKAH.01`) camera
 - Scope statement: metadata on the S3 object via annotations (in scope) vs production monitoring and advanced ML (out of scope)
 - Link to [terraform-aws-s3-annotations-demo](https://github.com/jajera/terraform-aws-s3-annotations-demo)
-- Card or list links to each major section (Introduction, Architecture, Deploy and Operate, Pipeline Deep Dive, Gallery and Presentation, Reference)
+- Card or list links to each major section (Introduction, Architecture, Deploy and Operate, Pipeline Deep Dive, Gallery, Reference)
 
 ### Content Page Format
 
@@ -462,7 +451,6 @@ export const REQUIRED_SLUGS = [
   "pipeline-deep-dive/api-query-and-presign",
   "pipeline-deep-dive/optional-dynamodb-mirror",
   "gallery-and-presentation/amplify-gallery",
-  "gallery-and-presentation/presenter-script",
   "reference/demo-file-map",
 ] as const;
 ```
@@ -482,7 +470,6 @@ When adding or renaming pages, update `astro.config.mjs`, `REQUIRED_SLUGS`, and 
 | `pipeline-deep-dive/api-query-and-presign`        | `src/content/docs/pipeline-deep-dive/api-query-and-presign.mdx`        |
 | `pipeline-deep-dive/optional-dynamodb-mirror`     | `src/content/docs/pipeline-deep-dive/optional-dynamodb-mirror.mdx`     |
 | `gallery-and-presentation/amplify-gallery`        | `src/content/docs/gallery-and-presentation/amplify-gallery.mdx`        |
-| `gallery-and-presentation/presenter-script`       | `src/content/docs/gallery-and-presentation/presenter-script.mdx`       |
 | `reference/demo-file-map`                         | `src/content/docs/reference/demo-file-map.mdx`                         |
 
 ## Correctness Properties

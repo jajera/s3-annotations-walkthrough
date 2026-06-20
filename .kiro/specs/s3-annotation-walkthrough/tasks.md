@@ -116,12 +116,7 @@ This plan implements an Astro Starlight documentation site from scratch, coverin
     - Reference `webapp.png` image with descriptive alt text
     - _Requirements: 3.10, 4.1, 4.2, 4.3, 4.4, 4.9, 9.4, 3.13, 3.14_
 
-  - [x] 7.2 Create presenter script page (src/content/docs/gallery-and-presentation/presenter-script.mdx)
-    - Add frontmatter with title "Presenter script" and description
-    - Migrate content about suggested ~30–45 minute demo flow
-    - _Requirements: 3.11, 4.1, 4.2, 4.3, 3.13, 3.14_
-
-  - [x] 7.3 Create demo file map page (src/content/docs/reference/demo-file-map.mdx)
+  - [x] 7.2 Create demo file map page (src/content/docs/reference/demo-file-map.mdx)
     - Add frontmatter with title "Demo project file map" and description
     - Migrate content about paths to Lambda, Terraform, Amplify, scripts, sample images
     - Include boto3 ≥ 1.43 requirement and local pytest instructions
@@ -205,7 +200,7 @@ This plan implements an Astro Starlight documentation site from scratch, coverin
     { "id": 2, "tasks": ["3.1", "9.1"] },
     { "id": 3, "tasks": ["4.1", "4.2", "5.1", "5.2"] },
     { "id": 4, "tasks": ["6.1", "6.2", "6.3", "6.4"] },
-    { "id": 5, "tasks": ["7.1", "7.2", "7.3"] },
+    { "id": 5, "tasks": ["7.1", "7.2"] },
     { "id": 6, "tasks": ["9.2", "9.3", "9.4", "9.5", "9.6", "9.7"] },
     { "id": 7, "tasks": ["10.1", "10.2"] }
   ]
