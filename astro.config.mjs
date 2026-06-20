@@ -19,7 +19,7 @@ export default defineConfig({
         {
           icon: "github",
           label: "Demo Source",
-          href: "https://github.com/jajera/terraform-aws-s3-annotations-demo",
+          href: "https://github.com/jajera/s3-annotations-walkthrough",
         },
       ],
       editLink: {
