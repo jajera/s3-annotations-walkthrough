@@ -4,8 +4,8 @@ import starlightThemeVintage from "starlight-theme-vintage";
 import { starlightBasePath } from "starlight-base-path";
 
 export default defineConfig({
-  site: "https://jajera.github.io",
-  base: "/s3-annotations-walkthrough/",
+  site: "https://s3-annotations-walkthrough.johna.kiwi",
+  base: "/",
   integrations: [
     starlight({
       title: "S3 Annotations Walkthrough",

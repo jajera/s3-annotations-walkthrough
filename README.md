@@ -5,7 +5,7 @@ Structured documentation site for the
 project — an Astro Starlight guide covering S3 Annotations concepts, serverless
 pipeline architecture, deployment operations, and the filterable image gallery.
 
-**Live site:** [jajera.github.io/s3-annotations-walkthrough](https://jajera.github.io/s3-annotations-walkthrough/)
+**Live site:** [jajera.github.io/s3-annotations-walkthrough](https://s3-annotations-walkthrough.johna.kiwi/)
 
 **Demo source:** [terraform-aws-s3-annotations-demo](https://github.com/jajera/terraform-aws-s3-annotations-demo)
 
@@ -37,7 +37,7 @@ npm ci
 npm run dev
 ```
 
-Open the URL printed by Astro (typically `http://localhost:4321/s3-annotations-walkthrough/`).
+Open the URL printed by Astro (typically `http://localhost:4321/`).
 
 ## Scripts
 

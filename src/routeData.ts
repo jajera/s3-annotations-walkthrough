@@ -1,6 +1,6 @@
 import { defineRouteMiddleware } from "@astrojs/starlight/route-data";
 
-const OG_IMAGE_PATH = "/s3-annotations-walkthrough/og-image.png";
+const OG_IMAGE_PATH = "/og-image.png";
 const OG_IMAGE_ALT =
   "S3 Annotations Walkthrough — metadata on the S3 object, write at ingest, read at query time";
 
