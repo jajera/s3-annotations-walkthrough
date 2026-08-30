@@ -8,6 +8,9 @@ export default defineConfig({
   base: "/",
   integrations: [
     starlight({
+      components: {
+        Head: "./src/components/Head.astro",
+      },
       title: "S3 Annotations Walkthrough",
       favicon: "/favicon.svg",
       description:
