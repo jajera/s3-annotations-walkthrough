@@ -1,6 +1,5 @@
 import { defineConfig } from "astro/config";
 import starlight from "@astrojs/starlight";
-import starlightThemeVintage from "starlight-theme-vintage";
 import { starlightBasePath } from "starlight-base-path";
 
 export default defineConfig({
@@ -8,16 +7,20 @@ export default defineConfig({
   base: "/",
   integrations: [
     starlight({
-      components: {
-        Head: "./src/components/Head.astro",
-      },
       title: "S3 Annotations Walkthrough",
       favicon: "/favicon.svg",
       description:
         "A guided walkthrough of the terraform-aws-s3-annotations-demo — S3 Annotations, serverless ingest, and a filterable image gallery.",
-      plugins: [starlightThemeVintage(), starlightBasePath()],
+      plugins: [starlightBasePath()],
       routeMiddleware: "./src/routeData.ts",
-      customCss: ["./src/styles/splash-overrides.css"],
+      customCss: [
+        "./src/styles/patina-tokens.css",
+        "./src/styles/splash-overrides.css",
+      ],
+      components: {
+        ThemeSelect: "./src/components/ThemeSelect.astro",
+        Head: "./src/components/Head.astro",
+      },
       social: [
         {
           icon: "github",
